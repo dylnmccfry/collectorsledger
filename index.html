@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collector's Ledger</title>
+<meta name="description" content="Collector's Ledger for iPhone and iPad: track what you own, what you paid, and what you made. Private by design, with no account, ads or tracking.">
+<meta name="theme-color" content="#0B5444">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2317865A'/%3E%3Cpath d='M18 55 L36 34 H80 V76 H36 Z' fill='white'/%3E%3Ccircle cx='31' cy='55' r='5' fill='%2317865A'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f6f8f6;
+    --surface: #ffffff;
+    --surface-2: #eef4f0;
+    --text: #13201a;
+    --muted: #536159;
+    --border: #dbe4de;
+    --accent: #17865A;
+    --accent-strong: #0B5444;
+    --accent-soft: #e2f3ea;
+    --hero-1: #34B477;
+    --hero-2: #0B5444;
+    --shadow: 0 1px 2px rgba(10, 30, 20, .06), 0 8px 24px rgba(10, 30, 20, .06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b110e;
+      --surface: #131c17;
+      --surface-2: #18241e;
+      --text: #e7efe9;
+      --muted: #9aaba1;
+      --border: #24332b;
+      --accent: #3cc486;
+      --accent-strong: #7fdcae;
+      --accent-soft: #163326;
+      --hero-1: #1a5d43;
+      --hero-2: #07130e;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .3);
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  /* Navigation */
+  header.nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav .wrap { display: flex; align-items: center; gap: 16px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); text-decoration: none; white-space: nowrap; }
+  .brand svg { width: 30px; height: 30px; border-radius: 7px; }
+  .nav nav { margin-left: auto; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .nav nav::-webkit-scrollbar { display: none; }
+  .nav nav a { color: var(--muted); text-decoration: none; font-size: 15px; padding: 6px 10px; border-radius: 8px; white-space: nowrap; }
+  .nav nav a:hover { color: var(--text); background: var(--surface-2); }
+
+  /* Hero */
+  .hero {
+    background: radial-gradient(120% 90% at 15% 0%, rgba(255,255,255,.18), transparent 60%), linear-gradient(160deg, var(--hero-1), var(--hero-2));
+    color: #fff;
+    padding: 72px 0 80px;
+  }
+  .hero .wrap { display: grid; grid-template-columns: 1.2fr .8fr; gap: 40px; align-items: center; }
+  .hero h1 { font-size: clamp(38px, 6vw, 60px); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 18px; }
+  .hero p.lead { font-size: clamp(18px, 2.2vw, 21px); color: rgba(255,255,255,.9); margin: 0 0 28px; max-width: 34em; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #fff; color: #0B5444; font-weight: 650; text-decoration: none;
+    padding: 13px 22px; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.18);
+  }
+  .btn svg { width: 20px; height: 20px; }
+  .btn.ghost { background: transparent; color: #fff; box-shadow: none; border: 1.5px solid rgba(255,255,255,.55); }
+  .hero small { display: block; margin-top: 16px; color: rgba(255,255,255,.8); font-size: 14px; }
+  .hero-icon { justify-self: center; width: min(280px, 70vw); filter: drop-shadow(0 24px 40px rgba(0,0,0,.35)); }
+  .hero-icon svg { width: 100%; height: auto; border-radius: 22.5%; display: block; }
+
+  /* Sections */
+  section.block { padding: 72px 0; }
+  section.block + section.block { border-top: 1px solid var(--border); }
+  .eyebrow { color: var(--accent); font-weight: 700; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 8px; }
+  h2 { font-size: clamp(28px, 4vw, 38px); line-height: 1.15; letter-spacing: -.01em; margin: 0 0 14px; }
+  .sub { color: var(--muted); max-width: 40em; margin: 0 0 36px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 22px; box-shadow: var(--shadow); }
+  .card h3 { margin: 12px 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .ico { width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+  .ico svg { width: 22px; height: 22px; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .promise { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .promise li { display: flex; gap: 12px; align-items: flex-start; }
+  .promise li svg { flex: none; width: 22px; height: 22px; color: var(--accent); margin-top: 3px; }
+  .price { font-size: 44px; font-weight: 800; letter-spacing: -.02em; margin: 4px 0; }
+  .price span { font-size: 16px; font-weight: 500; color: var(--muted); }
+
+  /* Legal */
+  .legal { max-width: 760px; }
+  .legal h2 { margin-bottom: 4px; }
+  .legal .meta { color: var(--muted); font-size: 15px; margin: 0 0 24px; }
+  .legal h3 { font-size: 19px; margin: 30px 0 8px; }
+  .legal p, .legal li { color: var(--text); }
+  .legal ul { padding-left: 22px; }
+  .legal li { margin: 6px 0; }
+  .legal .caps { text-transform: uppercase; font-size: 15px; letter-spacing: .01em; }
+  .summary { background: var(--accent-soft); border-radius: 16px; padding: 18px 22px; margin: 0 0 8px; }
+  .summary p { margin: 0; }
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 4px 18px; margin: 10px 0; }
+  details summary { cursor: pointer; font-weight: 650; padding: 12px 0; }
+  details p { margin: 0 0 14px; color: var(--muted); }
+  .contact-card { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; }
+  .contact-card .btn { background: var(--accent); color: #fff; }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 0 48px; color: var(--muted); font-size: 14px; }
+  footer .links { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 12px; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 820px) {
+    .hero { padding: 48px 0 56px; }
+    .hero .wrap { grid-template-columns: 1fr; }
+    .hero-icon { order: -1; width: 140px; justify-self: start; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .split { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .grid { grid-template-columns: 1fr; }
+    .brand span { display: none; }
+    section.block { padding: 52px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Collector's Ledger home">
+      <svg viewBox="0 0 1024 1024" aria-hidden="true"><use href="#app-icon"/></svg>
+      <span>Collector's Ledger</span>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#terms">Terms</a>
+      <a href="#disclaimers">Disclaimers</a>
+      <a href="#support">Support</a>
+    </nav>
+  </div>
+</header>
+
+<!-- App icon, drawn once and reused -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ic-bg" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#34B477"/><stop offset="1" stop-color="#0B5444"/></linearGradient>
+    <radialGradient id="ic-glow" cx="0.22" cy="0.12" r="0.75"><stop offset="0" stop-color="#fff" stop-opacity="0.35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ic-tag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4F2EA"/></linearGradient>
+    <mask id="ic-hole"><rect x="-100" y="-100" width="800" height="600" fill="#fff"/><circle cx="128" cy="180" r="36" fill="#000"/></mask>
+    <symbol id="app-icon" viewBox="0 0 1024 1024">
+      <rect width="1024" height="1024" fill="url(#ic-bg)"/>
+      <rect width="1024" height="1024" fill="url(#ic-glow)"/>
+      <g transform="translate(496 552) rotate(-16) scale(1.12) translate(-290 -180)">
+        <g mask="url(#ic-hole)">
+          <path d="M0,180 L150,0 L560,0 L560,360 L150,360 Z" fill="url(#ic-tag)" stroke="url(#ic-tag)" stroke-width="70" stroke-linejoin="round"/>
+        </g>
+        <polyline points="235,262 318,188 386,228 486,118" fill="none" stroke="#17865A" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M440,106 L500,104 L498,164" fill="none" stroke="#17865A" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <path transform="translate(806 214)" d="M0,-74 C8,-22 22,-8 74,0 C22,8 8,22 0,74 C-8,22 -22,8 -74,0 C-22,-8 -8,-22 0,-74 Z" fill="#FFF6C8"/>
+      <path transform="translate(874 330) scale(0.42)" d="M0,-74 C8,-22 22,-8 74,0 C22,8 8,22 0,74 C-8,22 -22,8 -74,0 C-22,-8 -8,-22 0,-74 Z" fill="#FFF6C8" opacity="0.85"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Know what you own, what you paid, and what you made.</h1>
+      <p class="lead">Collector's Ledger keeps your whole collection in your pocket. Snap a photo, log the price, and see your real profit after fees and shipping, with a year-end summary ready for your tax preparer.</p>
+      <div class="cta">
+        <a class="btn" href="[APP STORE LINK]">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.48.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.76 2.28-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.1 5.86c.63-.77 1.06-1.83.94-2.89-.91.04-2.02.61-2.67 1.37-.58.67-1.1 1.76-.96 2.8 1.02.08 2.06-.52 2.69-1.28z"/></svg>
+          Download on the App Store
+        </a>
+        <a class="btn ghost" href="#features">See what it does</a>
+      </div>
+      <small>Free for up to 10 items. One-time unlock for unlimited items. For iPhone and iPad.</small>
+    </div>
+    <div class="hero-icon"><svg viewBox="0 0 1024 1024" role="img" aria-label="Collector's Ledger app icon"><use href="#app-icon"/></svg></div>
+  </div>
+</section>
+
+<section class="block" id="features">
+  <div class="wrap">
+    <p class="eyebrow">Features</p>
+    <h2>Built for glass, tins, toys, coins, pottery, and whatever you collect.</h2>
+    <p class="sub">Whether you're keeping a collection or selling at shows and online, every item gets a clear record from the day you buy it to the day it sells.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <h3>Snap it, log it</h3>
+        <p>Take a photo and record what you paid, the condition, where it's stored, and whether you're keeping or selling it.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
+        <h3>Your real profit</h3>
+        <p>Enter the sale, selling fees and shipping. See what you actually made after what you paid. Asking prices never count as earnings.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <h3>Find anything fast</h3>
+        <p>Search by name, category, condition or storage spot. Browse a photo grid or a list, filtered by Keeping, For Sale or Sold.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h11M9 12h11M9 19h11"/><path d="M4 5h.01M4 12h.01M4 19h.01"/></svg></div>
+        <h3>Ready for the show</h3>
+        <p>Build a Show List with asking prices and a total for antique shows and flea markets, and record sales right at your booth.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div>
+        <h3>Year-end summary</h3>
+        <p>Pick a year to see whether you're up or down, then export a spreadsheet with one row per sale to share with your tax preparer.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 0 0 4.5 12.5 3.5 3.5 0 0 0 6 19z"/><path d="M12 12v6M9.5 14.5 12 12l2.5 2.5"/></svg></div>
+        <h3>Synced and backed up</h3>
+        <p>Your collection syncs privately through your own iCloud to all your devices, with one-tap or daily backups to iCloud Drive.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap split">
+    <div class="card">
+      <p class="eyebrow">Private by design</p>
+      <h2 style="font-size:28px">Your collection is yours.</h2>
+      <ul class="promise">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>No account to create and nothing to sign in to.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>No ads, no analytics, no tracking.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Data stays on your devices and in your own private iCloud.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Export everything to a spreadsheet any time.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <p class="eyebrow">Simple pricing</p>
+      <div class="price">Free <span>for up to 10 items</span></div>
+      <p style="color:var(--muted);margin:8px 0 0">A one-time <strong style="color:var(--text)">Unlimited Items</strong> purchase removes the limit on every device with your Apple ID. No subscription, and items you've already added are never locked.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PRIVACY POLICY ============================ -->
+<section class="block" id="privacy">
+  <div class="wrap legal">
+    <p class="eyebrow">Legal</p>
+    <h2>Privacy Policy</h2>
+    <p class="meta">Effective October 5, 2026</p>
+
+    <div class="summary"><p><strong>The short version:</strong> we don't collect your data. What you enter stays on your devices and in your own iCloud account. There are no accounts, ads, analytics or trackers, and we never sell or share anything because we never have it.</p></div>
+
+    <p>This policy explains how the Collector's Ledger app for iPhone and iPad (the "App") handles information. The App is published by Dylan McCaffrey ("we", "us", "our"). By using the App you agree to this policy.</p>
+
+    <h3>Information we collect</h3>
+    <p>We do not collect, receive, store, sell or share any personal information through the App. The App has no developer servers, no user accounts, no advertising, no analytics or tracking tools, and no third-party software development kits that collect data.</p>
+
+    <h3>Information stored on your device</h3>
+    <p>Everything you enter, including item names, descriptions, photos, prices, storage locations and sales, is stored on your device. We cannot see or access it.</p>
+
+    <h3>iCloud sync</h3>
+    <p>If iCloud sync is on (it is by default), your App data is also stored in the private database of your own iCloud account through Apple's CloudKit service, so it appears on your other devices signed in to the same Apple ID. This data is held by Apple under <a href="https://www.apple.com/legal/privacy/">Apple's Privacy Policy</a> and your iCloud terms. Only you can access it; we cannot. You can turn sync off in the App's Settings or in your device's iCloud settings.</p>
+
+    <h3>Backups and exports</h3>
+    <p>If you back up or export your data, the file is saved only to a location you choose, such as a folder in your iCloud Drive or the Files app. Files you share (for example, a spreadsheet you send to your tax preparer) go only where you send them. We never receive them.</p>
+
+    <h3>Camera and photos</h3>
+    <p>The App uses the camera only when you tap to take a photo of an item, and reads your photo library only through Apple's photo picker, for the photos you select. Photos are stored with your item records as described above.</p>
+
+    <h3>Purchases</h3>
+    <p>In-app purchases are processed entirely by Apple. We never receive your name, payment details or Apple ID. The App checks with Apple, on your device, whether you have purchased Unlimited Items.</p>
+
+    <h3>Information Apple may share with us</h3>
+    <p>If you have chosen in your device settings to share analytics or crash reports with app developers, Apple may provide us with aggregated, anonymous usage statistics and crash reports. These do not identify you, and we use them only to fix problems and improve the App. You can turn this off in Settings &gt; Privacy &amp; Security &gt; Analytics &amp; Improvements.</p>
+
+    <h3>If you contact us</h3>
+    <p>If you email us, we receive your email address and whatever you include in your message. We use it only to reply to you and keep it only as long as needed to help you, then delete it. Please don't send us your collection data or anything sensitive unless it's needed to solve your problem.</p>
+
+    <h3>Children</h3>
+    <p>The App is not directed to children under 13, and we do not knowingly collect personal information from anyone, including children.</p>
+
+    <h3>Your choices and rights</h3>
+    <p>Because we hold none of your App data, you are in full control of it. To delete it, delete the items in the App, or delete the App and remove its data from iCloud (on iPhone: Settings &gt; [your name] &gt; iCloud &gt; Manage Storage). Depending on where you live (for example, California, the EU or the UK), you may have rights to access, correct or delete personal information about you. For anything we may hold, such as an email you sent us, contact us at 33.savings-voyager@icloud.com and we will respond within the time required by law. We do not sell or "share" personal information as those terms are defined under California law.</p>
+
+    <h3>Security</h3>
+    <p>Your data is protected by your device's security and Apple's iCloud protections. Keep your device passcode and Apple ID secure. No method of storage or transmission is completely secure, and we cannot guarantee the security of data held on your device or by Apple.</p>
+
+    <h3>Changes to this policy</h3>
+    <p>We may update this policy from time to time. We will post the new version on this page with a new effective date. If a change materially affects how your information is handled, we will also note it in the App's release notes.</p>
+
+    <h3>Contact</h3>
+    <p>Questions about privacy: <a href="mailto:33.savings-voyager@icloud.com">33.savings-voyager@icloud.com</a></p>
+  </div>
+</section>
+
+<!-- ============================ TERMS OF USE / EULA ============================ -->
+<section class="block" id="terms">
+  <div class="wrap legal">
+    <p class="eyebrow">Legal</p>
+    <h2>Terms of Use (End User License Agreement)</h2>
+    <p class="meta">Effective October 5, 2026</p>
+
+    <div class="summary"><p><strong>The short version:</strong> the App is a record-keeping tool, not tax, financial or appraisal advice. You're responsible for your data and for keeping backups. It's provided as is, our liability is limited, Apple handles payments and refunds, and the law of FL applies. Please read the full terms below; they are a binding agreement.</p></div>
+
+    <h3>1. Agreement</h3>
+    <p>These Terms of Use ("Terms") are an agreement between you and Dylan McCaffrey ("we", "us", "our") for the Collector's Ledger app (the "App"). By downloading, installing or using the App, you agree to these Terms and to our <a href="#privacy">Privacy Policy</a>. If you do not agree, do not use the App.</p>
+    <p>If you got the App from Apple's App Store, Apple's <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Licensed Application End User License Agreement</a> (the "Standard EULA") also applies. These Terms add to the Standard EULA. If the two conflict, the Standard EULA controls to the extent of the conflict.</p>
+
+    <h3>2. License</h3>
+    <p>We grant you a limited, non-exclusive, non-transferable, revocable license to use the App on Apple-branded devices you own or control, as permitted by the App Store's Usage Rules, for your personal use or your own internal business use (such as tracking your own inventory and sales). The App is licensed, not sold. You may not copy, modify, reverse engineer, decompile, redistribute, rent, sell or sublicense the App, or use it to build a competing product, except as the law expressly allows despite this restriction.</p>
+
+    <h3>3. Not professional advice</h3>
+    <p>The App is a record-keeping and calculation tool. Profit, totals, the Year-End Summary, the tax report export and every other figure are calculated only from the information you enter, using simple formulas (for example, sale amount minus selling fees, shipping and what you paid). They may not reflect your actual tax position, cost basis, deductions or obligations.</p>
+    <p><strong>Nothing in the App or on this website is tax, accounting, legal, financial, investment or appraisal advice.</strong> The App does not value, appraise, authenticate or grade items. You are solely responsible for the accuracy of what you enter, for checking all figures, and for your tax filings and business decisions. Consult a qualified tax professional or other adviser before relying on any figure from the App.</p>
+
+    <h3>4. Your data, sync and backups</h3>
+    <p>Your data is stored on your devices and, if you use them, in Apple's iCloud and iCloud Drive services under your own Apple ID. We never receive your data and cannot view, restore or recover it. iCloud sync and backups depend on Apple's services, your network, your device storage and your iCloud storage, all of which are outside our control and may be delayed, interrupted, incomplete or fail. Sync between devices can produce conflicts, and restoring or importing a backup can change your records.</p>
+    <p>You are solely responsible for your data and for keeping your own current backups (the App provides Back Up Now and spreadsheet export for this). <span class="caps">To the maximum extent permitted by law, we are not liable for any loss, corruption, deletion, duplication or unavailability of your data, however caused, including through sync, backup, restore, import, updates, device failure or loss, or Apple's services.</span></p>
+
+    <h3>5. In-app purchase</h3>
+    <ul>
+      <li>The App is free to download and holds up to 10 items. "Unlimited Items" is an optional one-time, non-consumable in-app purchase that removes the item limit. It is not a subscription and does not renew.</li>
+      <li>The price is shown in the App Store before you buy and may vary by country and change over time. Payment is charged to your Apple ID and is processed by Apple under Apple's terms. We do not receive or store your payment information.</li>
+      <li>All refunds are handled by Apple under its policies. We cannot issue refunds. To request one, visit <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>.</li>
+      <li>The purchase is tied to your Apple ID and can be restored on your other devices with Restore Purchases. It is a license to use the unlocked feature, not a transfer of ownership, and it has no cash value.</li>
+      <li>Items you added before or without the purchase are never locked; you can always view, edit, back up and export them.</li>
+      <li>The purchase unlocks the item limit in the App as it exists from time to time. We do not promise any particular future features, updates, or compatibility with future devices or operating systems, and we may stop offering or supporting the App at any time.</li>
+    </ul>
+
+    <h3>6. Your content and acceptable use</h3>
+    <p>You keep all rights to the content you add, such as photos and notes. You are responsible for it and confirm you have the right to use it. You agree to use the App only for lawful purposes and in compliance with all laws that apply to you, including tax laws and laws governing the items you buy and sell.</p>
+
+    <h3>7. Intellectual property and trademarks</h3>
+    <p>The App, its name, icon, design, text and code are owned by Dylan McCaffrey and protected by copyright, trademark and other laws. Except for the license in section 2, no rights are granted to you.</p>
+    <p>Collector's Ledger is an independent app. It is not affiliated with, endorsed by or sponsored by Apple Inc., any online marketplace, auction house, antique show or flea market, or any manufacturer or brand of the items you catalog. Product names, brand names and trademarks you enter or photograph belong to their respective owners and are used only to describe your own items. Apple, iPhone, iPad, iCloud and App Store are trademarks of Apple Inc., registered in the U.S. and other countries.</p>
+
+    <h3>8. Feedback</h3>
+    <p>If you send us ideas or suggestions, you allow us to use them freely without any obligation or payment to you.</p>
+
+    <h3>9. No warranty</h3>
+    <p class="caps">To the maximum extent permitted by law, the App and this website are provided "as is" and "as available", with all faults and without warranty of any kind. We disclaim all warranties, express, implied or statutory, including warranties of merchantability, fitness for a particular purpose, title, non-infringement, accuracy, and quiet enjoyment, and any warranty that the App will be uninterrupted, error-free, secure, compatible with your device, or that calculations, sync or backups will be accurate or complete.</p>
+    <p>If the App fails to conform to any warranty that cannot be disclaimed, you may notify Apple, and Apple will refund the purchase price (if any) of the App to you. To the maximum extent permitted by law, Apple has no other warranty obligation with respect to the App.</p>
+
+    <h3>10. Limitation of liability</h3>
+    <p class="caps">To the maximum extent permitted by law, in no event will Dylan McCaffrey, or its owners, members, managers, employees or agents, be liable for any indirect, incidental, special, consequential, exemplary or punitive damages, or for any loss of profits, revenue, data, goodwill, or business, or for any taxes, penalties, interest or fees, arising out of or related to the App, this website or these Terms, whether based on contract, tort (including negligence), strict liability or any other theory, even if advised of the possibility of such damages.</p>
+    <p class="caps">Our total liability for all claims arising out of or related to the App, this website or these Terms will not exceed the greater of (a) the amount you paid for the App and in-app purchases in the twelve months before the event giving rise to the claim, or (b) ten U.S. dollars (US$10).</p>
+    <p>Some jurisdictions do not allow certain warranty exclusions or liability limits, so some of the above may not apply to you. In that case, our liability is limited to the smallest amount permitted by law. Nothing in these Terms limits liability that cannot be limited by law.</p>
+
+    <h3>11. Indemnity</h3>
+    <p>To the extent permitted by law, you agree to defend, indemnify and hold harmless Dylan McCaffrey and its owners, members, managers, employees and agents from any claims, losses, liabilities and expenses (including reasonable attorneys' fees) arising from your use or misuse of the App, your content, or your violation of these Terms or any law.</p>
+
+    <h3>12. Apple</h3>
+    <ul>
+      <li>These Terms are between you and us only, not with Apple. We, not Apple, are solely responsible for the App and its content.</li>
+      <li>Apple has no obligation to provide any maintenance or support for the App.</li>
+      <li>We, not Apple, are responsible for addressing any claims by you or any third party relating to the App or your possession or use of it, including product liability claims, claims that the App fails to conform to any legal or regulatory requirement, and claims under consumer protection, privacy or similar laws, subject to the limits in these Terms.</li>
+      <li>If a third party claims that the App or your possession or use of it infringes their intellectual property rights, we, not Apple, are solely responsible for the investigation, defense, settlement and discharge of that claim.</li>
+      <li>You represent that you are not located in a country subject to a U.S. Government embargo or designated as a "terrorist supporting" country, and that you are not on any U.S. Government list of prohibited or restricted parties.</li>
+      <li>You must comply with any applicable third-party terms when using the App, such as your Apple ID and iCloud terms.</li>
+      <li>Apple and its subsidiaries are third-party beneficiaries of these Terms, and once you accept them, Apple has the right to enforce them against you as a third-party beneficiary.</li>
+    </ul>
+
+    <h3>13. Termination</h3>
+    <p>These Terms apply until ended by you or us. You can end them at any time by deleting the App. Your rights under them end automatically if you fail to comply with them. Sections 3, 4, 6 through 12, 14 and 15 survive termination.</p>
+
+    <h3>14. Governing law and disputes</h3>
+    <p>These Terms and any dispute arising out of or related to them or the App are governed by the laws of the State of FL, United States, without regard to its conflict-of-law rules. The United Nations Convention on Contracts for the International Sale of Goods does not apply.</p>
+    <p>Before filing any claim, you agree to first contact us at 33.savings-voyager@icloud.com and try to resolve the dispute informally for at least 30 days. If it is not resolved, any legal action must be brought exclusively in the state or federal courts and you and we consent to the personal jurisdiction of those courts, except that either party may bring an individual claim in small claims court where it qualifies.</p>
+    <p>To the maximum extent permitted by law, all claims must be brought in your individual capacity and not as a plaintiff or class member in any purported class, collective or representative proceeding, and any claim must be filed within one year after it arose or it is permanently barred.</p>
+    <p>If you live in the European Union, the United Kingdom or another place whose law gives consumers rights that cannot be waived by contract (including the right to bring a claim in your local courts), nothing in these Terms takes away those rights.</p>
+
+    <h3>15. General</h3>
+    <p>We may update these Terms from time to time by posting the new version on this page with a new effective date. Continuing to use the App after a change means you accept the updated Terms. If any provision is found unenforceable, it will be enforced to the maximum extent possible and the rest will remain in effect. Our failure to enforce a provision is not a waiver. You may not assign these Terms; we may assign them, including to a successor business or entity. These Terms, the Privacy Policy and the Standard EULA are the entire agreement between you and us about the App.</p>
+
+    <h3>16. Contact</h3>
+    <p>Dylan McCaffrey &middot; <a href="mailto:33.savings-voyager@icloud.com">33.savings-voyager@icloud.com</a></p>
+  </div>
+</section>
+
+<!-- ============================ DISCLAIMERS ============================ -->
+<section class="block" id="disclaimers">
+  <div class="wrap legal">
+    <p class="eyebrow">Legal</p>
+    <h2>Disclaimers</h2>
+    <p class="meta">Effective October 5, 2026. These summarize parts of the <a href="#terms">Terms of Use</a>, which control.</p>
+
+    <h3>Not tax, financial or appraisal advice</h3>
+    <p>Collector's Ledger is a record-keeping tool. Profit, totals, the Year-End Summary and the tax report are calculated only from what you enter and are not tax, accounting, legal, financial, investment or appraisal advice. The App does not tell you what anything is worth. Always check your figures and consult a qualified professional before filing taxes or making financial decisions.</p>
+
+    <h3>Accuracy depends on what you enter</h3>
+    <p>Results are only as accurate as the prices, fees, shipping costs and dates you record. The App does not account for every tax rule, deduction, cost or expense that may apply to you.</p>
+
+    <h3>Your data is your responsibility</h3>
+    <p>Your records live on your devices and in your own iCloud. We never receive them and cannot recover them. iCloud sync and backups depend on Apple's services and can be delayed or fail, so keep your own regular backups and exports.</p>
+
+    <h3>Provided as is</h3>
+    <p>The App and this website are provided "as is", without warranties, and our liability is limited as described in the <a href="#terms">Terms of Use</a>.</p>
+
+    <h3>Not affiliated</h3>
+    <p>Collector's Ledger is independent and is not affiliated with or endorsed by Apple, any marketplace, auction house or show, or any brand or maker of the items you catalog. All trademarks belong to their respective owners.</p>
+  </div>
+</section>
+
+<!-- ============================ SUPPORT ============================ -->
+<section class="block" id="support">
+  <div class="wrap legal">
+    <p class="eyebrow">Help</p>
+    <h2>Support</h2>
+    <div class="card contact-card" style="margin:18px 0 26px">
+      <div>
+        <strong>Questions, bugs or ideas?</strong>
+        <p style="margin:4px 0 0;color:var(--muted)">Email us and we'll get back to you as soon as we can.</p>
+      </div>
+      <a class="btn" href="mailto:33.savings-voyager@icloud.com?subject=Collector's%20Ledger%20support">33.savings-voyager@icloud.com</a>
+    </div>
+
+    <details>
+      <summary>How do I move my collection to a new phone?</summary>
+      <p>With iCloud sync on (the default), just sign in to the same Apple ID on the new phone and open the App; your items sync over. You can also go to Settings &gt; Backup &amp; Restore on the old phone, tap Back Up Now, then restore that backup on the new one.</p>
+    </details>
+    <details>
+      <summary>My items aren't showing up on my other device.</summary>
+      <p>Make sure both devices use the same Apple ID, iCloud is on for the App, and you have free iCloud storage. Open Settings in the App to see the iCloud Sync status. Sync can take a few minutes, especially with many photos.</p>
+    </details>
+    <details>
+      <summary>How do I restore my Unlimited Items purchase?</summary>
+      <p>Open Settings &gt; Unlock Unlimited Items and tap Restore Purchases, signed in with the Apple ID you used to buy it.</p>
+    </details>
+    <details>
+      <summary>How do I get a refund?</summary>
+      <p>Purchases are handled by Apple, so refunds are requested from Apple at <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>. We aren't able to issue refunds ourselves.</p>
+    </details>
+    <details>
+      <summary>Can you recover my deleted items?</summary>
+      <p>No. We never receive your data, so we can't see or restore it. If you have a backup in iCloud Drive or the Files app, you can restore it from Settings &gt; Backup &amp; Restore.</p>
+    </details>
+    <details>
+      <summary>How do I delete all my data?</summary>
+      <p>Delete the App, then remove its data from iCloud: on iPhone, open Settings &gt; [your name] &gt; iCloud &gt; Manage Storage, choose Collector's Ledger and delete its data. Delete any backup files you saved in iCloud Drive or Files.</p>
+    </details>
+    <details>
+      <summary>Is the Year-End Summary good enough for my taxes?</summary>
+      <p>It's a record to share with your tax preparer, not tax advice. It only knows what you entered, so please review it with a qualified tax professional.</p>
+    </details>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#terms">Terms of Use</a>
+      <a href="#disclaimers">Disclaimers</a>
+      <a href="#support">Support</a>
+      <a href="mailto:33.savings-voyager@icloud.com">Contact</a>
+    </div>
+    <p style="margin:0">&copy; 2026 Dylan McCaffrey. All rights reserved. Collector's Ledger is not affiliated with Apple Inc. Apple, the Apple logo, iPhone, iPad and iCloud are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc.</p>
+  </div>
+</footer>
+
+</body>
+</html>
